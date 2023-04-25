@@ -1,5 +1,6 @@
 {
   "name": "test-lit",
+  "homepage": "https://www.stevenhuyn.com/hello-wasm/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
