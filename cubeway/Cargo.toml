@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 description = "A sample project with wasm-pack"
 repository = "https://github.com/stevenhuyn/hello-wasm"
-license = "MIT"
 
 [lib]
 name = "cubeway"
