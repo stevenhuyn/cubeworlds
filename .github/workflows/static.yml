@@ -34,15 +34,12 @@ jobs:
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - uses: Swatinem/rust-cache@v2
-      - name: wasm-pack
-        run: wasm-pack build --target web --out-dir app/pkg
-
       - name: install dependencies
         run: |
           npm ci
           cd app && npm ci
 
+      - uses: Swatinem/rust-cache@v2
       - name: build app
         run: npm run build
 
