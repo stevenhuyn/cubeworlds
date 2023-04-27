@@ -1,8 +1,8 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import litLogo from "./assets/lit.svg";
+import litLogo from "../assets/lit.svg";
 import viteLogo from "/vite.svg";
-import init, { greet, run } from "../../cubeway/pkg/cubeway";
+import init, { greet, run } from "../../../cubeway/pkg/cubeway";
 
 /**
  * An example element.
@@ -10,8 +10,8 @@ import init, { greet, run } from "../../cubeway/pkg/cubeway";
  * @slot - This element has a slot
  * @csspart button - The button
  */
-@customElement("my-element")
-export class MyElement extends LitElement {
+@customElement("cubeway-simulation")
+export class CubewaySimulation extends LitElement {
   /**
    * Copy for the read the docs hint.
    */
@@ -129,6 +129,6 @@ export class MyElement extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "my-element": MyElement;
+    "cubeway-simulation": CubewaySimulation;
   }
 }
