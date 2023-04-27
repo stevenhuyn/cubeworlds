@@ -38,11 +38,14 @@ jobs:
       - name: wasm-pack
         run: wasm-pack build --target web --out-dir app/pkg
 
-      - name: build app
+      - name: install dependencies
         run: |
-          cd app
           npm ci
-          npm run build
+          cd app && npm ci
+
+      - name: build app
+        run: npm run build
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact

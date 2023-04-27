@@ -1,16 +1,13 @@
 {
-  "name": "3d-conway",
+  "name": "web-cubeway",
   "version": "1.0.0",
   "scripts": {
-    "dev": "concurrently \"cd cubeway && cargo watch -- wasm-pack build --target web\" \"cd app && npm run dev\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/stevenhuyn/hello-wasm.git"
+    "dev": "concurrently \"cd cubeway && cargo watch -- wasm-pack build --target web\" \"cd app && npm run dev\"",
+    "build": "concurrently \"cd cubeway && wasm-pack build --target web\" \"cd app && npm run build\""
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.0.1"
   }
