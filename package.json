@@ -1,0 +1,17 @@
+{
+  "name": "3d-conway",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"cd cubeway && cargo watch -- wasm-pack build --target web\" \"cd app && npm run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevenhuyn/hello-wasm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.0.1"
+  }
+}

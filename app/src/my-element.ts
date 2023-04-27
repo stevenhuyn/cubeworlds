@@ -2,7 +2,7 @@ import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import litLogo from "./assets/lit.svg";
 import viteLogo from "/vite.svg";
-import init, { greet, run } from "../pkg/wgpu_hello_wasm";
+import init, { greet, run } from "../../cubeway/pkg/cubeway";
 
 /**
  * An example element.
@@ -34,7 +34,7 @@ export class MyElement extends LitElement {
 
   render() {
     return html`
-      <div>
+      <div id="wasm-example">
         <a href="https://vitejs.dev" target="_blank">
           <img src=${viteLogo} class="logo" alt="Vite logo" />
         </a>
