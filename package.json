@@ -2,7 +2,8 @@
   "name": "web-cubeway",
   "version": "1.0.0",
   "scripts": {
-    "dev": "concurrently \"cd cubeway && cargo watch -- wasm-pack build --target web\" \"cd app && npm run dev\""
+    "dev": "concurrently \"cd cubeway && cargo watch -- wasm-pack build --target web\" \"cd app && npm run dev\"",
+    "build": "concurrently \"cd cubeway && wasm-pack build --target web\" \"cd app && npm run build\""
   },
   "keywords": [],
   "author": "",

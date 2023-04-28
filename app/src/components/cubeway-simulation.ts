@@ -2,7 +2,7 @@ import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import litLogo from "../assets/lit.svg";
 import viteLogo from "/vite.svg";
-import init, { greet, run } from "../../../cubeway/pkg/cubeway";
+import init from "../../../cubeway/pkg/cubeway";
 
 /**
  * An example element.
