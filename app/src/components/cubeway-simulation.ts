@@ -28,7 +28,6 @@ export class CubewaySimulation extends LitElement {
     super.connectedCallback();
     init().then(() => {
       greet("Testing");
-      run();
     });
   }
 
