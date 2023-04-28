@@ -26,9 +26,7 @@ export class CubewaySimulation extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    init().then(() => {
-      greet("Testing");
-    });
+    init().then(() => {});
   }
 
   render() {
