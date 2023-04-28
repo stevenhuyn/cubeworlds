@@ -109,8 +109,14 @@ impl State {
         }
     }
 
-    #[allow(unused_variables)]
     fn input(&mut self, event: &WindowEvent) -> bool {
+        if let WindowEvent::KeyboardInput { input, .. } = event {
+            if let Some(keycode) = input.virtual_keycode {
+                log::warn!("Key Pressed {:?}", keycode);
+                return true;
+            }
+        }
+
         false
     }
 
