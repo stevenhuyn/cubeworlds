@@ -16,12 +16,15 @@ path = "src/main.rs"
 [dependencies]
 wasm-bindgen = "0.2"
 winit = "0.28"
+cgmath = "0.18"
 env_logger = "0.10"
 log = "0.4"
 wgpu = "0.16"
 cfg-if = "1"
 pollster = "0.3"
 bytemuck = { version = "1.12", features = [ "derive" ] }
+image = "0.24"
+anyhow = "1.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.6"
@@ -35,6 +38,7 @@ web-sys = { version = "0.3", features = [
     "Element",
 ]}
 
+[build-dependencies]
 
 [profile.release]
 lto = true
