@@ -28,6 +28,7 @@ fn vs_main(
 ) -> VertexOutput {
     let model_matrix = create_model_matrix(instance.model_position, instance.model_rotation);
     var out: VertexOutput;
+    out.color = (normalize(instance.model_velocity) + vec3<f32>(1., 1., 1.)) / 2.;
     out.clip_position = camera.view_proj * model_matrix * vec4<f32>(model.position, 1.0);
     return out;
 }
@@ -77,6 +78,5 @@ fn create_model_matrix(position: vec3<f32>, quaternion: vec4<f32>) -> mat4x4<f32
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    let color = normalize(in.clip_position.xyz / in.clip_position.w);
-    return vec4<f32>(color, 1.0);
+    return vec4<f32>(in.color, 1.0);
 }

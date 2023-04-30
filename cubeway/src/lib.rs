@@ -18,13 +18,6 @@ mod cube;
 mod greet;
 mod texture;
 
-const NUM_INSTANCES_PER_ROW: u32 = 10;
-const INSTANCE_DISPLACEMENT: cgmath::Vector3<f32> = cgmath::Vector3::new(
-    NUM_INSTANCES_PER_ROW as f32 * 0.5,
-    0.0,
-    NUM_INSTANCES_PER_ROW as f32 * 0.5,
-);
-
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 pub struct Vertex {
@@ -156,7 +149,7 @@ impl State {
                     label: None,
                     features: wgpu::Features::empty(),
                     limits: wgpu::Limits {
-                        ..wgpu::Limits::downlevel_defaults()
+                        ..wgpu::Limits::default()
                     },
                 },
                 None, // Trace path
@@ -201,24 +194,26 @@ impl State {
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
 
-        let instances = (0..NUM_INSTANCES_PER_ROW)
-            .flat_map(|z| {
-                (0..NUM_INSTANCES_PER_ROW).map(move |x| {
-                    let position = cgmath::Vector3 {
-                        x: x as f32,
-                        y: 0.0,
-                        z: z as f32,
-                    } - INSTANCE_DISPLACEMENT;
+        let num_instances: u32 = 9;
 
-                    // let rotation = cgmath::Quaternion::zero();
+        let instances = (1..=num_instances)
+            .flat_map(|x| {
+                (0..=num_instances).flat_map(move |y| {
+                    (0..=num_instances).map(move |z| {
+                        let x = x as f32 - 5.;
+                        let y = y as f32 - 5.;
+                        let z = z as f32 - 5.;
 
-                    Instance {
-                        position: position.into(),
-                        _pad: 0.0,
-                        velocity: [0.0, 0.0, 0.0],
-                        _pad2: 0.0,
-                        rotation: [1., 0., 0., 0.],
-                    }
+                        let position = cgmath::Vector3 { x, y, z } * 5.;
+
+                        Instance {
+                            position: position.into(),
+                            _pad: 0.0,
+                            velocity: [0.0, 0.0, 0.0],
+                            _pad2: 0.0,
+                            rotation: [1., 0., 0., 0.],
+                        }
+                    })
                 })
             })
             .collect::<Vec<_>>();
@@ -394,8 +389,6 @@ impl State {
             entry_point: "main",
         });
 
-        let num_particles = NUM_INSTANCES_PER_ROW * NUM_INSTANCES_PER_ROW;
-
         let mut particle_buffers = Vec::<wgpu::Buffer>::new();
         let mut particle_bind_groups = Vec::<wgpu::BindGroup>::new();
 
@@ -552,7 +545,10 @@ pub async fn run() {
     }
 
     let event_loop = EventLoop::new();
-    let window = WindowBuilder::new().build(&event_loop).unwrap();
+    let window = WindowBuilder::new()
+        .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None)))
+        .build(&event_loop)
+        .unwrap();
 
     #[cfg(target_arch = "wasm32")]
     {

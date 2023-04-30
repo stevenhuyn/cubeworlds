@@ -22,13 +22,13 @@ pub struct Camera {
 impl Camera {
     pub fn new(screen_width: f32, screen_height: f32) -> Self {
         Camera {
-            eye: (0.0, 5.0, 10.0).into(),
+            eye: (0.0, 20.0, 50.0).into(),
             target: (0.0, 0.0, 0.0).into(),
             up: cgmath::Vector3::unit_y(),
             aspect: screen_width / screen_height,
             fovy: 45.0,
-            znear: 1.,
-            zfar: 100.0,
+            znear: 5.0,
+            zfar: 200.0,
         }
     }
 
@@ -70,7 +70,7 @@ pub struct CameraController {
 impl CameraController {
     pub fn new() -> Self {
         Self {
-            speed: 0.01,
+            speed: 0.2,
             is_up_pressed: false,
             is_down_pressed: false,
             is_forward_pressed: false,
