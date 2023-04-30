@@ -8,8 +8,11 @@ Add to vscode workspace json settings
 
 ```json
 {
-  "rust-analyzer.cargo.extraEnv": {
-    "RUSTFLAGS": "--cfg rust_analyzer"
-  }
+  "rust-analyzer.cargo.target": "wasm32-unknown-unknown"
 }
 ```
+
+# Resources
+
+https://github.com/webgpu/webgpu-samples/tree/main
+https://sotrh.github.io/learn-wgpu/
