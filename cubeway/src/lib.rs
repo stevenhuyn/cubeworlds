@@ -1,6 +1,7 @@
 use std::iter;
 
 use cgmath::prelude::*;
+use cube::Cube;
 use wgpu::util::DeviceExt;
 use winit::{
     event::*,
@@ -11,6 +12,7 @@ use winit::{
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
+mod cube;
 mod greet;
 mod texture;
 
@@ -23,7 +25,7 @@ const INSTANCE_DISPLACEMENT: cgmath::Vector3<f32> = cgmath::Vector3::new(
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
-struct Vertex {
+pub struct Vertex {
     position: [f32; 3],
     color: [f32; 3],
 }
@@ -50,30 +52,30 @@ impl Vertex {
     }
 }
 
-const VERTICES: &[Vertex] = &[
-    Vertex {
-        position: [-0.0868241, 0.49240386, 0.0],
-        color: [1., 0., 0.],
-    }, // A
-    Vertex {
-        position: [-0.49513406, 0.06958647, 0.0],
-        color: [0., 1., 0.],
-    }, // B
-    Vertex {
-        position: [-0.21918549, -0.44939706, 0.0],
-        color: [0., 0., 1.],
-    }, // C
-    Vertex {
-        position: [0.35966998, -0.3473291, 0.0],
-        color: [1., 0., 1.],
-    }, // D
-    Vertex {
-        position: [0.44147372, 0.2347359, 0.0],
-        color: [1., 1., 0.],
-    }, // E
-];
+// const VERTICES: &[Vertex] = &[
+//     Vertex {
+//         position: [-0.0868241, 0.49240386, 0.0],
+//         color: [1., 0., 0.],
+//     }, // A
+//     Vertex {
+//         position: [-0.49513406, 0.06958647, 0.0],
+//         color: [0., 1., 0.],
+//     }, // B
+//     Vertex {
+//         position: [-0.21918549, -0.44939706, 0.0],
+//         color: [0., 0., 1.],
+//     }, // C
+//     Vertex {
+//         position: [0.35966998, -0.3473291, 0.0],
+//         color: [1., 0., 1.],
+//     }, // D
+//     Vertex {
+//         position: [0.44147372, 0.2347359, 0.0],
+//         color: [1., 1., 0.],
+//     }, // E
+// ];
 
-const INDICES: &[u16] = &[0, 1, 4, 1, 2, 4, 2, 3, 4, /* padding */ 0];
+// const INDICES: &[u16] = &[0, 1, 4, 1, 2, 4, 2, 3, 4, /* padding */ 0];
 
 #[rustfmt::skip]
 pub const OPENGL_TO_WGPU_MATRIX: cgmath::Matrix4<f32> = cgmath::Matrix4::new(
@@ -507,17 +509,19 @@ impl State {
             multiview: None,
         });
 
+        let cube = Cube::new(0., 0., 0., 1., [1., 0., 0.]);
+
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
-            contents: bytemuck::cast_slice(VERTICES),
+            contents: bytemuck::cast_slice(&cube.vertices),
             usage: wgpu::BufferUsages::VERTEX,
         });
         let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Index Buffer"),
-            contents: bytemuck::cast_slice(INDICES),
+            contents: bytemuck::cast_slice(&cube.indices),
             usage: wgpu::BufferUsages::INDEX,
         });
-        let num_indices = INDICES.len() as u32;
+        let num_indices = cube.indices.len() as u32;
 
         Self {
             surface,
