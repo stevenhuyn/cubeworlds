@@ -13,3 +13,8 @@ Add to vscode workspace json settings
   }
 }
 ```
+
+# Resources
+
+https://github.com/webgpu/webgpu-samples/tree/main
+https://sotrh.github.io/learn-wgpu/
