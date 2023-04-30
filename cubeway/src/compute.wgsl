@@ -4,6 +4,7 @@ struct SimParams {
 
 struct Instance {
     position: vec3<f32>,
+    unused: f32,
     rotation: vec4<f32>,
 }
 
@@ -17,9 +18,8 @@ struct Instances {
 fn main(@builtin(global_invocation_id) GlobalInvocationID: vec3<u32>) {
     var index = GlobalInvocationID.x;
 
-    instanceBuffer[index * 7u].position.y -= 0.001;
 
     if index < 100u {
-        let bufferIndex = u32(f32(index) * 7.0);
+        instanceBuffer[index].position.y -= 0.001;
     }
 }
