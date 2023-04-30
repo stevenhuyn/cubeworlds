@@ -392,7 +392,6 @@ impl State {
 
         particle_buffers.push(instance_buffer);
 
-        // Create 2 bind groups one for each buffer
         particle_bind_groups.push(device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &particle_bind_group_layout,
             entries: &[
