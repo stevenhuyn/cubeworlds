@@ -181,7 +181,7 @@ impl State {
         surface.configure(&device, &config);
 
         let camera = Camera::new(config.width as f32, config.height as f32);
-        let camera_controller = CameraController::new(0.01);
+        let camera_controller = CameraController::new(0.2);
 
         let mut camera_uniform = CameraUniform::new();
         camera_uniform.update_view_proj(&camera);
@@ -219,6 +219,8 @@ impl State {
                 })
             })
             .collect::<Vec<_>>();
+
+        println!("{:?}", instances[0]);
 
         let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Instance Buffer"),
@@ -417,7 +419,7 @@ impl State {
             entry_point: "main",
         });
 
-        let num_particles = 100;
+        let num_particles = 25;
         let initial_particle_data = vec![0.0f32; (4 * num_particles) as usize];
 
         let mut particle_buffers = Vec::<wgpu::Buffer>::new();

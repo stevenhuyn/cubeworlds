@@ -38,20 +38,13 @@ fn main(@builtin(global_invocation_id) GlobalInvocationID : vec3<u32>) {
 
 //     // Do something
 //   }
-  let bufferIndex = u32(f32(index) * 8.0);
-  instanceBuffer.instances[index + 0u].position.y -= 0.01;
-  instanceBuffer.instances[index + 1u].position.y -= 0.01;
-  instanceBuffer.instances[index + 2u].position.y -= 0.01;
-  instanceBuffer.instances[index + 3u].position.y -= 0.01;
-  instanceBuffer.instances[index + 4u].position.y -= 0.01;
-  instanceBuffer.instances[index + 5u].position.y -= 0.01;
-  instanceBuffer.instances[index + 6u].position.y -= 0.01;
-  instanceBuffer.instances[index + 7u].position.y -= 0.01;
-  instanceBuffer.instances[index + 8u].position.y -= 0.01;
-
-  // Do something
-
-  // Write back
-  particlesB.particles[index].pos = vPos;
-  particlesB.particles[index].vel = vVel;
+  let bufferIndex = u32(f32(index) * 7.0);
+  instanceBuffer.instances[index + 0u].position.z -= 0.0001;
+  instanceBuffer.instances[index + 1u].position.z -= 0.0001;
+  instanceBuffer.instances[index + 2u].position.z -= 0.0001;
+  instanceBuffer.instances[index + 3u].position.z -= 0.0001;
+  instanceBuffer.instances[index + 4u].position.z -= 0.0001;
+  instanceBuffer.instances[index + 5u].position.z -= 0.0001;
+  instanceBuffer.instances[index + 6u].position.z -= 0.0001;
+  instanceBuffer.instances[index + 7u].position.z -= 0.0001;
 }
