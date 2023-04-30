@@ -2,8 +2,8 @@ use std::iter;
 
 use camera::{Camera, CameraController, CameraUniform};
 use cgmath::prelude::*;
-use wgpu::util::DeviceExt;
 use cube::Cube;
+use wgpu::util::DeviceExt;
 use winit::{
     event::*,
     event_loop::{ControlFlow, EventLoop},
@@ -20,9 +20,6 @@ mod texture;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
-struct Vertex {
-    position: [f32; 3],
-    tex_coords: [f32; 2],
 pub struct Vertex {
     pub position: [f32; 3],
     pub color: [f32; 3],
@@ -43,7 +40,7 @@ impl Vertex {
                 wgpu::VertexAttribute {
                     offset: mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
                     shader_location: 1,
-                    format: wgpu::VertexFormat::Float32x2,
+                    format: wgpu::VertexFormat::Float32x3,
                 },
             ],
         }
@@ -136,9 +133,6 @@ struct State {
     vertex_buffer: wgpu::Buffer,
     index_buffer: wgpu::Buffer,
     num_indices: u32,
-    #[allow(dead_code)]
-    diffuse_texture: texture::Texture,
-    diffuse_bind_group: wgpu::BindGroup,
     camera: Camera,
     camera_controller: CameraController,
     camera_uniform: CameraUniform,
@@ -264,7 +258,7 @@ impl State {
             up: cgmath::Vector3::unit_y(),
             aspect: config.width as f32 / config.height as f32,
             fovy: 45.0,
-            znear: 0.1,
+            znear: 0.01,
             zfar: 100.0,
         };
         let camera_controller = CameraController::new(0.01);
@@ -399,7 +393,7 @@ impl State {
             multiview: None,
         });
 
-        let cube = Cube::new(0.0, 0.0, 0.0, 10.0, [0.5, 0.5, 0.5]);
+        let cube = Cube::new(0.0, 0.0, 0.0, 1.0, [1.0, 0.0, 0.0]);
 
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
@@ -423,8 +417,6 @@ impl State {
             vertex_buffer,
             index_buffer,
             num_indices,
-            diffuse_texture,
-            diffuse_bind_group,
             camera,
             camera_controller,
             camera_buffer,
@@ -508,7 +500,6 @@ impl State {
 
             render_pass.set_vertex_buffer(1, self.instance_buffer.slice(..));
             render_pass.set_pipeline(&self.render_pipeline);
-            render_pass.set_bind_group(0, &self.diffuse_bind_group, &[]);
             render_pass.set_bind_group(1, &self.camera_bind_group, &[]);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
