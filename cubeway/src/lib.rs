@@ -57,19 +57,19 @@ const VERTICES: &[Vertex] = &[
     }, // A
     Vertex {
         position: [-0.49513406, 0.06958647, 0.0],
-        color: [1., 0., 0.],
+        color: [0., 1., 0.],
     }, // B
     Vertex {
         position: [-0.21918549, -0.44939706, 0.0],
-        color: [1., 0., 0.],
+        color: [0., 0., 1.],
     }, // C
     Vertex {
         position: [0.35966998, -0.3473291, 0.0],
-        color: [1., 0., 0.],
+        color: [1., 0., 1.],
     }, // D
     Vertex {
         position: [0.44147372, 0.2347359, 0.0],
-        color: [1., 0., 0.],
+        color: [1., 1., 0.],
     }, // E
 ];
 
@@ -280,9 +280,6 @@ struct State {
     vertex_buffer: wgpu::Buffer,
     index_buffer: wgpu::Buffer,
     num_indices: u32,
-    #[allow(dead_code)]
-    diffuse_texture: texture::Texture,
-    diffuse_bind_group: wgpu::BindGroup,
     camera: Camera,
     camera_controller: CameraController,
     camera_uniform: CameraUniform,
@@ -358,48 +355,6 @@ impl State {
             view_formats: vec![],
         };
         surface.configure(&device, &config);
-
-        let diffuse_bytes = include_bytes!("happy-tree.png");
-        let diffuse_texture =
-            texture::Texture::from_bytes(&device, &queue, diffuse_bytes, "happy-tree.png").unwrap();
-
-        let texture_bind_group_layout =
-            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Texture {
-                            multisampled: false,
-                            view_dimension: wgpu::TextureViewDimension::D2,
-                            sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 1,
-                        visibility: wgpu::ShaderStages::FRAGMENT,
-                        ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-                        count: None,
-                    },
-                ],
-                label: Some("texture_bind_group_layout"),
-            });
-
-        let diffuse_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            layout: &texture_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(&diffuse_texture.view),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: wgpu::BindingResource::Sampler(&diffuse_texture.sampler),
-                },
-            ],
-            label: Some("diffuse_bind_group"),
-        });
 
         let camera = Camera {
             eye: (0.0, 5.0, 10.0).into(),
@@ -485,7 +440,7 @@ impl State {
         let render_pipeline_layout =
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("Render Pipeline Layout"),
-                bind_group_layouts: &[&texture_bind_group_layout, &camera_bind_group_layout],
+                bind_group_layouts: &[&camera_bind_group_layout],
                 push_constant_ranges: &[],
             });
 
@@ -555,8 +510,6 @@ impl State {
             vertex_buffer,
             index_buffer,
             num_indices,
-            diffuse_texture,
-            diffuse_bind_group,
             camera,
             camera_controller,
             camera_buffer,
@@ -630,8 +583,7 @@ impl State {
             });
 
             render_pass.set_pipeline(&self.render_pipeline);
-            render_pass.set_bind_group(0, &self.diffuse_bind_group, &[]);
-            render_pass.set_bind_group(1, &self.camera_bind_group, &[]);
+            render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
             render_pass.set_vertex_buffer(1, self.instance_buffer.slice(..));
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
