@@ -1,7 +1,7 @@
 # 3D Conway Implementation - WASM Compatible
 
 ```bash
-wasm-pack build --target web --out-dir app/pkg
+wasm-pack build --target web
 ```
 
 Add to vscode workspace json settings

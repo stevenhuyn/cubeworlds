@@ -12,7 +12,8 @@ struct VertexInput {
 }
 struct InstanceInput {
     @location(2) model_position: vec3<f32>,
-    @location(3) model_rotation: vec4<f32>
+    @location(3) model_velocity: vec3<f32>,
+    @location(4) model_rotation: vec4<f32>
 }
 
 struct VertexOutput {

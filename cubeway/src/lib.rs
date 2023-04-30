@@ -1,4 +1,4 @@
-use std::{iter, mem};
+use std::{f32::consts::E, iter, mem};
 
 use camera::{Camera, CameraController, CameraUniform};
 use cgmath::prelude::*;
@@ -58,6 +58,8 @@ impl Vertex {
 struct Instance {
     position: [f32; 3],
     _pad: f32,
+    velocity: [f32; 3],
+    _pad2: f32,
     rotation: [f32; 4],
 }
 
@@ -76,8 +78,13 @@ impl Instance {
                     format: wgpu::VertexFormat::Float32x3,
                 },
                 wgpu::VertexAttribute {
-                    offset: 16 as wgpu::BufferAddress,
+                    offset: 16,
                     shader_location: 3,
+                    format: wgpu::VertexFormat::Float32x3,
+                },
+                wgpu::VertexAttribute {
+                    offset: 32 as wgpu::BufferAddress,
+                    shader_location: 4,
                     format: wgpu::VertexFormat::Float32x4,
                 },
             ],
@@ -130,29 +137,34 @@ impl State {
 
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
-                power_preference: wgpu::PowerPreference::default(),
+                power_preference: wgpu::PowerPreference::HighPerformance,
                 compatible_surface: Some(&surface),
                 force_fallback_adapter: false,
             })
             .await
             .unwrap();
+
+        println!("{:?}", adapter.get_info());
+        log::warn!("{:?}", adapter.get_info());
+        log::warn!("{:?}", adapter.get_downlevel_capabilities());
+
+        log::warn!("Getting device");
+
         let (device, queue) = adapter
             .request_device(
                 &wgpu::DeviceDescriptor {
                     label: None,
                     features: wgpu::Features::empty(),
-                    // WebGL doesn't support all of wgpu's features, so if
-                    // we're building for the web we'll have to disable some.
-                    limits: if cfg!(target_arch = "wasm32") {
-                        wgpu::Limits::downlevel_webgl2_defaults()
-                    } else {
-                        wgpu::Limits::default()
+                    limits: wgpu::Limits {
+                        ..wgpu::Limits::downlevel_defaults()
                     },
                 },
                 None, // Trace path
             )
             .await
-            .unwrap();
+            .expect("Device unable to get requested features");
+
+        log::warn!("Device Gotten");
 
         let surface_caps = surface.get_capabilities(&adapter);
         // Shader code in this tutorial assumes an Srgb surface texture. Using a different
@@ -164,6 +176,7 @@ impl State {
             .copied()
             .find(|f| f.is_srgb())
             .unwrap_or(surface_caps.formats[0]);
+
         let config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             format: surface_format,
@@ -173,6 +186,7 @@ impl State {
             alpha_mode: surface_caps.alpha_modes[0],
             view_formats: vec![],
         };
+
         surface.configure(&device, &config);
 
         let camera = Camera::new(config.width as f32, config.height as f32);
@@ -201,6 +215,8 @@ impl State {
                     Instance {
                         position: position.into(),
                         _pad: 0.0,
+                        velocity: [0.0, 0.0, 0.0],
+                        _pad2: 0.0,
                         rotation: [1., 0., 0., 0.],
                     }
                 })
@@ -474,11 +490,12 @@ impl State {
         // Run Compute Pass
         encoder.push_debug_group("Particle System");
         {
-            let mut cpass =
-                encoder.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None });
+            let mut cpass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("Compute Pass"),
+            });
             cpass.set_pipeline(&self.compute_pipeline);
             cpass.set_bind_group(0, &self.particle_bind_groups[0], &[]);
-            cpass.dispatch_workgroups(2, 1, 1);
+            cpass.dispatch_workgroups(65535, 1, 1);
         }
         encoder.pop_debug_group();
 
