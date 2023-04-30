@@ -384,6 +384,19 @@ impl State {
                         },
                         count: None,
                     },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 3,
+                        visibility: wgpu::ShaderStages::COMPUTE,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Storage { read_only: false },
+                            has_dynamic_offset: false,
+                            // min_binding_size: None,
+                            min_binding_size: None, // wgpu::BufferSize::new(
+                                                    //     (NUM_INSTANCES_PER_ROW * NUM_INSTANCES_PER_ROW) as _,
+                                                    // ),
+                        },
+                        count: None,
+                    },
                 ],
                 label: None,
             });
@@ -437,6 +450,10 @@ impl State {
                     wgpu::BindGroupEntry {
                         binding: 2,
                         resource: particle_buffers[(i + 1) % 2].as_entire_binding(), // bind to opposite buffer
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 3,
+                        resource: instance_buffer.as_entire_binding(),
                     },
                 ],
                 label: None,
