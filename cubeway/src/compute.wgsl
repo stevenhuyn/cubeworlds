@@ -7,7 +7,8 @@ struct Instance {
     unused: f32,
     velocity: vec3<f32>,
     unused2: f32,
-    rotation: vec4<f32>,
+    rotation: vec3<f32>,
+    unused3: f32,
 }
 
 struct Instances {
@@ -31,5 +32,15 @@ fn main(@builtin(global_invocation_id) GlobalInvocationID: vec3<u32>) {
     }
 
     instanceBuffer[index].velocity += force;
+    instanceBuffer[index].rotation = velocity_to_euler_angle(instanceBuffer[index].velocity);
     instanceBuffer[index].position += instanceBuffer[index].velocity;
+}
+
+fn velocity_to_euler_angle(velocity: vec3<f32>) -> vec3<f32> {
+    let xz = vec2<f32>(velocity.x, velocity.z);
+    let y = velocity.y;
+    let pitch = atan2(y, length(xz));
+    let yaw = atan2(xz.y, xz.x);
+
+    return vec3<f32>(pitch, yaw, 0.0);
 }

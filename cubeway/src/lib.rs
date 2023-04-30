@@ -1,8 +1,9 @@
 use std::{f32::consts::E, iter, mem};
 
 use camera::{Camera, CameraController, CameraUniform};
-use cgmath::prelude::*;
+use cgmath::{prelude::*, Quaternion};
 use cube::Cube;
+use nanorand::{Rng, WyRand};
 use wgpu::{util::DeviceExt, ComputePipeline};
 use winit::{
     event::*,
@@ -53,7 +54,8 @@ struct Instance {
     _pad: f32,
     velocity: [f32; 3],
     _pad2: f32,
-    rotation: [f32; 4],
+    rotation: [f32; 3],
+    _pad3: f32,
 }
 
 impl Instance {
@@ -78,7 +80,7 @@ impl Instance {
                 wgpu::VertexAttribute {
                     offset: 32 as wgpu::BufferAddress,
                     shader_location: 4,
-                    format: wgpu::VertexFormat::Float32x4,
+                    format: wgpu::VertexFormat::Float32x3,
                 },
             ],
         }
@@ -194,24 +196,34 @@ impl State {
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
 
-        let num_instances: u32 = 9;
+        let num_instances: u32 = 5;
 
         let instances = (1..=num_instances)
             .flat_map(|x| {
                 (0..=num_instances).flat_map(move |y| {
                     (0..=num_instances).map(move |z| {
-                        let x = x as f32 - 5.;
-                        let y = y as f32 - 5.;
-                        let z = z as f32 - 5.;
+                        let mut rng = WyRand::new();
+
+                        let x = x as f32 - (num_instances as f32 / 2.0).ceil()
+                            + (rng.generate::<f32>() - 0.5) * 5.;
+                        let y = y as f32 - (num_instances as f32 / 2.0).ceil()
+                            + (rng.generate::<f32>() - 0.5) * 5.;
+                        let z = z as f32 - (num_instances as f32 / 2.0).ceil()
+                            + (rng.generate::<f32>() - 0.5) * 5.;
 
                         let position = cgmath::Vector3 { x, y, z } * 5.;
 
                         Instance {
                             position: position.into(),
                             _pad: 0.0,
-                            velocity: [0.0, 0.0, 0.0],
+                            velocity: [
+                                (rng.generate::<f32>() - 0.5) * 0.1,
+                                (rng.generate::<f32>() - 0.5) * 0.1,
+                                (rng.generate::<f32>() - 0.5) * 0.1,
+                            ],
                             _pad2: 0.0,
-                            rotation: [1., 0., 0., 0.],
+                            rotation: [1., 0., 0.],
+                            _pad3: 0.0,
                         }
                     })
                 })

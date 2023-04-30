@@ -13,7 +13,7 @@ struct VertexInput {
 struct InstanceInput {
     @location(2) model_position: vec3<f32>,
     @location(3) model_velocity: vec3<f32>,
-    @location(4) model_rotation: vec4<f32>
+    @location(4) model_rotation: vec3<f32>
 }
 
 struct VertexOutput {
@@ -33,48 +33,16 @@ fn vs_main(
     return out;
 }
 
-fn create_model_matrix(position: vec3<f32>, quaternion: vec4<f32>) -> mat4x4<f32> {
-    let q = quaternion;
-    let x = q.x;
-    let y = q.y;
-    let z = q.z;
-    let w = q.w;
+fn create_model_matrix(position: vec3<f32>, euler_angle: vec3<f32>) -> mat4x4<f32> {
+    let c = cos(euler_angle);
+    let s = sin(euler_angle);
+    let cx = vec4<f32>(1.0, 0.0, 0.0, 0.0);
+    let cy = vec4<f32>(0.0, c.x, s.x, 0.0);
+    let cz = vec4<f32>(0.0, -s.x, c.x, 0.0);
+    let translation = vec4<f32>(position, 1.0);
 
-    let xx = x * x;
-    let xy = x * y;
-    let xz = x * z;
-    let xw = x * w;
-
-    let yy = y * y;
-    let yz = y * z;
-    let yw = y * w;
-
-    let zz = z * z;
-    let zw = z * w;
-
-    let m00 = 1.0 - 2.0 * (yy + zz);
-    let m01 = 2.0 * (xy + zw);
-    let m02 = 2.0 * (xz - yw);
-    let m03 = 0.0;
-
-    let m10 = 2.0 * (xy - zw);
-    let m11 = 1.0 - 2.0 * (xx + zz);
-    let m12 = 2.0 * (yz + xw);
-    let m13 = 0.0;
-
-    let m20 = 2.0 * (xz + yw);
-    let m21 = 2.0 * (yz - xw);
-    let m22 = 1.0 - 2.0 * (xx + yy);
-    let m23 = 0.0;
-
-    let m30 = position.x;
-    let m31 = position.y;
-    let m32 = position.z;
-    let m33 = 1.0;
-
-    return mat4x4<f32>(vec4<f32>(m00, m01, m02, m03), vec4<f32>(m10, m11, m12, m13), vec4<f32>(m20, m21, m22, m23), vec4<f32>(m30, m31, m32, m33));
+    return mat4x4<f32>(cx, cy, cz, translation);
 }
-// Fragment shader
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
