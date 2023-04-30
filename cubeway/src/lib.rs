@@ -71,17 +71,13 @@ impl Instance {
             attributes: &[
                 wgpu::VertexAttribute {
                     offset: 0,
-                    // While our vertex shader only uses locations 0, and 1 now, in later tutorials we'll
-                    // be using 2, 3, and 4, for Vertex. We'll start at slot 5 not conflict with them later
                     shader_location: 2,
                     format: wgpu::VertexFormat::Float32x3,
                 },
-                // A mat4 takes up 4 vertex slots as it is technically 4 vec4s. We need to define a slot
-                // for each vec4. We don't have to do this in code though.
                 wgpu::VertexAttribute {
                     offset: mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
                     shader_location: 3,
-                    format: wgpu::VertexFormat::Float32x3,
+                    format: wgpu::VertexFormat::Float32x4,
                 },
             ],
         }
@@ -104,8 +100,6 @@ struct State {
     camera_buffer: wgpu::Buffer,
     camera_bind_group: wgpu::BindGroup,
     instances: Vec<Instance>,
-    #[allow(dead_code)]
-    instance_buffer: wgpu::Buffer,
     depth_texture: texture::Texture,
     window: Window,
 
@@ -181,7 +175,7 @@ impl State {
         surface.configure(&device, &config);
 
         let camera = Camera::new(config.width as f32, config.height as f32);
-        let camera_controller = CameraController::new(0.2);
+        let camera_controller = CameraController::new();
 
         let mut camera_uniform = CameraUniform::new();
         camera_uniform.update_view_proj(&camera);
@@ -220,7 +214,8 @@ impl State {
             })
             .collect::<Vec<_>>();
 
-        println!("{:?}", instances[0]);
+        println!("First element: {:?}", instances[0]);
+        println!("Length: {:?}", instances.len());
 
         let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Instance Buffer"),
@@ -337,7 +332,7 @@ impl State {
             source: wgpu::ShaderSource::Wgsl(include_str!("compute.wgsl").into()),
         });
 
-        let particle_params = [0.1_f32];
+        let particle_params = [0.0001_f32];
 
         let particle_params_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("conway ruleset"),
@@ -364,38 +359,9 @@ impl State {
                         binding: 1,
                         visibility: wgpu::ShaderStages::COMPUTE,
                         ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Storage { read_only: true },
-                            has_dynamic_offset: false,
-                            // min_binding_size: None,
-                            min_binding_size: None, // wgpu::BufferSize::new(
-                                                    //     (NUM_INSTANCES_PER_ROW * NUM_INSTANCES_PER_ROW) as _,
-                                                    // ),
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 2,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::Buffer {
                             ty: wgpu::BufferBindingType::Storage { read_only: false },
                             has_dynamic_offset: false,
-                            // min_binding_size: None,
-                            min_binding_size: None, // wgpu::BufferSize::new(
-                                                    //     (NUM_INSTANCES_PER_ROW * NUM_INSTANCES_PER_ROW) as _,
-                                                    // ),
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 3,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Storage { read_only: false },
-                            has_dynamic_offset: false,
-                            // min_binding_size: None,
-                            min_binding_size: None, // wgpu::BufferSize::new(
-                                                    //     (NUM_INSTANCES_PER_ROW * NUM_INSTANCES_PER_ROW) as _,
-                                                    // ),
+                            min_binding_size: None,
                         },
                         count: None,
                     },
@@ -420,47 +386,27 @@ impl State {
         });
 
         let num_particles = NUM_INSTANCES_PER_ROW * NUM_INSTANCES_PER_ROW;
-        let initial_particle_data = vec![0.0f32; (4 * num_particles) as usize];
 
         let mut particle_buffers = Vec::<wgpu::Buffer>::new();
         let mut particle_bind_groups = Vec::<wgpu::BindGroup>::new();
-        for i in 0..2 {
-            particle_buffers.push(
-                device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                    label: Some(&format!("Cell Buffer {}", i)),
-                    contents: bytemuck::cast_slice(&initial_particle_data),
-                    usage: wgpu::BufferUsages::VERTEX
-                        | wgpu::BufferUsages::STORAGE
-                        | wgpu::BufferUsages::COPY_DST,
-                }),
-            );
-        }
+
+        particle_buffers.push(instance_buffer);
 
         // Create 2 bind groups one for each buffer
-        for i in 0..2 {
-            particle_bind_groups.push(device.create_bind_group(&wgpu::BindGroupDescriptor {
-                layout: &particle_bind_group_layout,
-                entries: &[
-                    wgpu::BindGroupEntry {
-                        binding: 0,
-                        resource: particle_params_buffer.as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 1,
-                        resource: particle_buffers[i].as_entire_binding(),
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 2,
-                        resource: particle_buffers[(i + 1) % 2].as_entire_binding(), // bind to opposite buffer
-                    },
-                    wgpu::BindGroupEntry {
-                        binding: 3,
-                        resource: instance_buffer.as_entire_binding(),
-                    },
-                ],
-                label: None,
-            }));
-        }
+        particle_bind_groups.push(device.create_bind_group(&wgpu::BindGroupDescriptor {
+            layout: &particle_bind_group_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: particle_params_buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: particle_buffers[0].as_entire_binding(),
+                },
+            ],
+            label: None,
+        }));
 
         let frame_num = 0;
 
@@ -480,7 +426,6 @@ impl State {
             camera_bind_group,
             camera_uniform,
             instances,
-            instance_buffer,
             depth_texture,
             window,
             frame_num,
@@ -540,8 +485,8 @@ impl State {
             let mut cpass =
                 encoder.begin_compute_pass(&wgpu::ComputePassDescriptor { label: None });
             cpass.set_pipeline(&self.compute_pipeline);
-            cpass.set_bind_group(0, &self.particle_bind_groups[(self.frame_num + 1) % 2], &[]);
-            cpass.dispatch_workgroups(65535, 1, 1);
+            cpass.set_bind_group(0, &self.particle_bind_groups[0], &[]);
+            cpass.dispatch_workgroups(2, 1, 1);
         }
         encoder.pop_debug_group();
 
@@ -574,7 +519,7 @@ impl State {
             render_pass.set_pipeline(&self.render_pipeline);
             render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
-            render_pass.set_vertex_buffer(1, self.instance_buffer.slice(..));
+            render_pass.set_vertex_buffer(1, self.particle_buffers[0].slice(..));
             render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
             render_pass.draw_indexed(0..self.num_indices, 0, 0..self.instances.len() as u32);
         }
