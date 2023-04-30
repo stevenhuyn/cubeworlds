@@ -419,7 +419,7 @@ impl State {
             entry_point: "main",
         });
 
-        let num_particles = 25;
+        let num_particles = NUM_INSTANCES_PER_ROW * NUM_INSTANCES_PER_ROW;
         let initial_particle_data = vec![0.0f32; (4 * num_particles) as usize];
 
         let mut particle_buffers = Vec::<wgpu::Buffer>::new();
