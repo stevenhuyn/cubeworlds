@@ -34,7 +34,6 @@ fn vs_main(
         instance.model_matrix_3,
     );
     var out: VertexOutput;
-    out.color = model.color;
     out.clip_position = camera.view_proj * model_matrix * vec4<f32>(model.position, 1.0);
     return out;
 }
@@ -43,5 +42,6 @@ fn vs_main(
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    return vec4<f32>(in.color, 1.0);
+    let color = normalize(in.clip_position.xyz / in.clip_position.w);
+    return vec4<f32>(color, 1.0);
 }

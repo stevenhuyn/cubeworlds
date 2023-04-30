@@ -509,7 +509,7 @@ impl State {
             multiview: None,
         });
 
-        let cube = Cube::new(0., 0., 0., 1., [1., 0., 0.]);
+        let cube = Cube::new(0., 0., 0., 0.5, [1., 0., 0.]);
 
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
