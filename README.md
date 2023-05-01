@@ -2,8 +2,8 @@
 
 Having a second go at compute shaders. This time making some sort of instanced particle system.
 
-Currently broken in browser but works in native.
+Web Version requires Chrome Beta atm.
 
 ## Example Instanced Gravity Simulation of Cubes
-https://user-images.githubusercontent.com/18359644/235383053-fa1005ad-48e1-4253-9587-ca212ffcac86.mp4
 
+https://user-images.githubusercontent.com/18359644/235383053-fa1005ad-48e1-4253-9587-ca212ffcac86.mp4

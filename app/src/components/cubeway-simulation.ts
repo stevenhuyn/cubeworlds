@@ -30,21 +30,7 @@ export class CubewaySimulation extends LitElement {
   }
 
   render() {
-    return html`
-      <div id="wasm-example">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src=${viteLogo} class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://lit.dev" target="_blank">
-          <img src=${litLogo} class="logo lit" alt="Lit logo" />
-        </a>
-      </div>
-      <slot></slot>
-      <div class="card">
-        <button @click=${this._onClick} part="button">count is ${this.count}</button>
-      </div>
-      <p class="read-the-docs">${this.docsHint}</p>
-    `;
+    return html` <slot></slot> `;
   }
 
   private _onClick() {
