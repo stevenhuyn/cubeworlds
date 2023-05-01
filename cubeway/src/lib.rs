@@ -139,12 +139,6 @@ impl State {
             .await
             .unwrap();
 
-        println!("{:?}", adapter.get_info());
-        log::warn!("{:?}", adapter.get_info());
-        log::warn!("{:?}", adapter.get_downlevel_capabilities());
-
-        log::warn!("Getting device");
-
         let (device, queue) = adapter
             .request_device(
                 &wgpu::DeviceDescriptor {
@@ -158,8 +152,6 @@ impl State {
             )
             .await
             .expect("Device unable to get requested features");
-
-        log::warn!("Device Gotten");
 
         let surface_caps = surface.get_capabilities(&adapter);
         // Shader code in this tutorial assumes an Srgb surface texture. Using a different
