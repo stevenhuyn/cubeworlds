@@ -18,8 +18,23 @@ struct Instances {
 fn main(@builtin(global_invocation_id) GlobalInvocationID: vec3<u32>) {
     var index = GlobalInvocationID.x;
 
+    var force: vec3<f32> = vec3<f32>(0.0, 0.0, 0.0);
+    for (var i = 0u; i < arrayLength(&instanceBuffer); i++) {
+        if i == index {
+            continue;
+        }
 
-    if index < 100u {
-        instanceBuffer[index].position.y -= 0.001;
+        var diff = instanceBuffer[i].position - instanceBuffer[index].position;
+        var direction = normalize(diff);
+
+        if length(diff) == 0.0 {
+            return;
+        }
+
+        var gravity = params.gravity / length(diff);
+
+        force += direction * gravity;
     }
+
+    instanceBuffer[index].position += force;
 }
