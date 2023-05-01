@@ -28,6 +28,12 @@ fn main(@builtin(global_invocation_id) GlobalInvocationID: vec3<u32>) {
         }
 
         var diff = instanceBuffer[i].position - instanceBuffer[index].position;
+        let magnitude = length(diff);
+
+        if magnitude == 0.0 {
+            continue;
+        }
+
         force += normalize(diff) * params.gravity / length(diff);
     }
 
