@@ -1,3 +1,6 @@
 # 3D Conway on da web
 
-![Video of example](./media/gh-example.mp4)
+
+
+https://user-images.githubusercontent.com/18359644/235383053-fa1005ad-48e1-4253-9587-ca212ffcac86.mp4
+
