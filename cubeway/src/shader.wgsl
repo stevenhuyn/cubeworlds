@@ -34,14 +34,43 @@ fn vs_main(
 }
 
 fn create_model_matrix(position: vec3<f32>, euler_angle: vec3<f32>) -> mat4x4<f32> {
-    let c = cos(euler_angle);
-    let s = sin(euler_angle);
-    let cx = vec4<f32>(1.0, 0.0, 0.0, 0.0);
-    let cy = vec4<f32>(0.0, c.x, s.x, 0.0);
-    let cz = vec4<f32>(0.0, -s.x, c.x, 0.0);
-    let translation = vec4<f32>(position, 1.0);
+    let pitch = euler_angle.x;
+    let yaw = euler_angle.y;
+    let roll = euler_angle.z;
 
-    return mat4x4<f32>(cx, cy, cz, translation);
+    let c1 = cos(yaw);
+    let s1 = sin(yaw);
+    let c2 = cos(pitch);
+    let s2 = sin(pitch);
+    let c3 = cos(roll);
+    let s3 = sin(roll);
+
+    let r11 = c1 * c3 + s1 * s2 * s3;
+    let r12 = c3 * s1 * s2 - c1 * s3;
+    let r13 = c2 * s1;
+    let r14 = 0.0;
+
+    let r21 = c2 * s3;
+    let r22 = c2 * c3;
+    let r23 = -s2;
+    let r24 = 0.0;
+
+    let r31 = c1 * s2 * s3 - c3 * s1;
+    let r32 = c1 * c3 * s2 + s1 * s3;
+    let r33 = c1 * c2;
+    let r34 = 0.0;
+
+    let r41 = position.x;
+    let r42 = position.y;
+    let r43 = position.z;
+    let r44 = 1.0;
+
+    return mat4x4<f32>(
+        vec4<f32>(r11, r12, r13, r14),
+        vec4<f32>(r21, r22, r23, r24),
+        vec4<f32>(r31, r32, r33, r34),
+        vec4<f32>(r41, r42, r43, r44)
+    );
 }
 
 @fragment
