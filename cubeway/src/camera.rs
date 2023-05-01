@@ -28,7 +28,7 @@ impl Camera {
             aspect: screen_width / screen_height,
             fovy: 45.0,
             znear: 5.0,
-            zfar: 200.0,
+            zfar: 1000.0,
         }
     }
 
