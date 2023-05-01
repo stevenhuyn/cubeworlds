@@ -1,3 +1,3 @@
 # 3D Conway on da web
 
-![Video of example](./media/example.mp4)
+![Video of example](./media/gh-example.mp4)
