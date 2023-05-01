@@ -69,8 +69,14 @@ pub struct CameraController {
 
 impl CameraController {
     pub fn new() -> Self {
+        let speed = if cfg!(target_arch = "wasm32") {
+            1.
+        } else {
+            0.1
+        };
+
         Self {
-            speed: 0.2,
+            speed,
             is_up_pressed: false,
             is_down_pressed: false,
             is_forward_pressed: false,

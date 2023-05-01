@@ -1,7 +1,6 @@
-use std::{f32::consts::E, iter, mem};
+use std::{iter, mem};
 
 use camera::{Camera, CameraController, CameraUniform};
-use cgmath::{prelude::*, Quaternion};
 use cube::Cube;
 use nanorand::{Rng, WyRand};
 use wgpu::{util::DeviceExt, ComputePipeline};
@@ -105,8 +104,6 @@ struct State {
     instances: Vec<Instance>,
     depth_texture: texture::Texture,
     window: Window,
-
-    frame_num: usize,
 
     particle_bind_groups: Vec<wgpu::BindGroup>,
     particle_buffers: Vec<wgpu::Buffer>,
@@ -415,8 +412,6 @@ impl State {
             label: None,
         }));
 
-        let frame_num = 0;
-
         Self {
             surface,
             device,
@@ -435,7 +430,6 @@ impl State {
             instances,
             depth_texture,
             window,
-            frame_num,
             particle_bind_groups,
             particle_buffers,
             compute_pipeline,
