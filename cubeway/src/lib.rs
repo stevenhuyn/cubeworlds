@@ -151,7 +151,7 @@ impl State {
                     label: None,
                     features: wgpu::Features::empty(),
                     limits: wgpu::Limits {
-                        ..wgpu::Limits::default()
+                        ..wgpu::Limits::downlevel_defaults()
                     },
                 },
                 None, // Trace path
