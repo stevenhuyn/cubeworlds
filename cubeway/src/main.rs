@@ -1,6 +1,7 @@
-use cubeway::run;
+use cubeway::{run, setup};
 use pollster::FutureExt;
 
 fn main() {
-    run().block_on();
+    setup();
+    run(100).block_on();
 }

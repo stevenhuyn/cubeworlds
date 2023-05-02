@@ -111,7 +111,7 @@ struct State {
 }
 
 impl State {
-    async fn new(window: Window) -> Self {
+    async fn new(window: Window, particle_count: usize) -> Self {
         let size = window.inner_size();
 
         // The instance is a handle to our GPU
@@ -187,39 +187,27 @@ impl State {
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
 
-        let num_instances: u32 = 5;
-
-        let instances = (1..=num_instances)
-            .flat_map(|x| {
-                (0..=num_instances).flat_map(move |y| {
-                    (0..=num_instances).map(move |z| {
-                        let mut rng = WyRand::new();
-
-                        let x = x as f32 - (num_instances as f32 / 2.0).ceil()
-                            + (rng.generate::<f32>() - 0.5) * 5.;
-                        let y = y as f32 - (num_instances as f32 / 2.0).ceil()
-                            + (rng.generate::<f32>() - 0.5) * 5.;
-                        let z = z as f32 - (num_instances as f32 / 2.0).ceil()
-                            + (rng.generate::<f32>() - 0.5) * 5.;
-
-                        let position = cgmath::Vector3 { x, y, z } * 5.;
-
-                        Instance {
-                            position: position.into(),
-                            _pad: 0.0,
-                            velocity: [
-                                (rng.generate::<f32>() - 0.5) * 0.1,
-                                (rng.generate::<f32>() - 0.5) * 0.1,
-                                (rng.generate::<f32>() - 0.5) * 0.1,
-                            ],
-                            _pad2: 0.0,
-                            rotation: [1., 0., 0.],
-                            _pad3: 0.0,
-                        }
-                    })
-                })
+        let mut instances: Vec<Instance> = Vec::with_capacity(particle_count);
+        let mut rng = WyRand::new();
+        for i in 0..particle_count {
+            let i = i as f32;
+            instances.push(Instance {
+                position: [
+                    (rng.generate::<f32>() - 0.5) * i * 0.5,
+                    (rng.generate::<f32>() - 0.5) * i * 0.5,
+                    (rng.generate::<f32>() - 0.5) * i * 0.5,
+                ],
+                _pad: 0.0,
+                velocity: [
+                    (rng.generate::<f32>() - 0.5) * 0.1,
+                    (rng.generate::<f32>() - 0.5) * 0.1,
+                    (rng.generate::<f32>() - 0.5) * 0.1,
+                ],
+                _pad2: 0.0,
+                rotation: [1., 0., 0.],
+                _pad3: 0.,
             })
-            .collect::<Vec<_>>();
+        }
 
         println!("First element: {:?}", instances[0]);
         println!("Length: {:?}", instances.len());
@@ -534,7 +522,7 @@ impl State {
 }
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
-pub async fn run() {
+pub fn setup() {
     cfg_if::cfg_if! {
         if #[cfg(target_arch = "wasm32")] {
             std::panic::set_hook(Box::new(console_error_panic_hook::hook));
@@ -543,7 +531,10 @@ pub async fn run() {
             env_logger::init();
         }
     }
+}
 
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+pub async fn run(particle_count: usize) {
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new()
         .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None)))
@@ -573,7 +564,7 @@ pub async fn run() {
     }
 
     // State::new uses async code, so we're going to wait for it to finish
-    let mut state = State::new(window).await;
+    let mut state = State::new(window, particle_count).await;
 
     event_loop.run(move |event, _, control_flow| {
         match event {

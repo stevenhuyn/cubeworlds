@@ -1,1 +1,1 @@
-export { CubewaySimulation } from "./cubeway-simulation";
+export { CubewaySimulation } from "./CubewaySimulation";
