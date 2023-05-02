@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
-import init from "../../../cubeway/pkg/cubeway";
+import init, { run } from "../../../cubeway/pkg/cubeway";
+import { DispatchEvent, SimulationController } from "../services/SimulationController";
 
 /**
  * An example element.
@@ -12,7 +13,15 @@ import init from "../../../cubeway/pkg/cubeway";
 export class CubewaySimulation extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
-    init().then(() => {});
+    SimulationController.Instance.addEventListener(DispatchEvent.Particles, (e: Event) => {
+      this.requestUpdate();
+      const detail = (<CustomEvent>e).detail;
+      run(detail as number);
+    });
+
+    init().then(() => {
+      run(10000);
+    });
   }
 
   render() {

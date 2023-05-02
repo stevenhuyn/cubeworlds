@@ -1,4 +1,4 @@
-use cubeway::run;
+use cubeway::{run, setup};
 use pollster::FutureExt;
 
 fn main() {

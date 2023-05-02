@@ -22,13 +22,13 @@ pub struct Camera {
 impl Camera {
     pub fn new(screen_width: f32, screen_height: f32) -> Self {
         Camera {
-            eye: (0.0, 20.0, 50.0).into(),
+            eye: (0.0, 100.0, 250.0).into(),
             target: (0.0, 0.0, 0.0).into(),
             up: cgmath::Vector3::unit_y(),
             aspect: screen_width / screen_height,
             fovy: 45.0,
             znear: 5.0,
-            zfar: 1000.0,
+            zfar: 5000.0,
         }
     }
 
@@ -69,11 +69,7 @@ pub struct CameraController {
 
 impl CameraController {
     pub fn new() -> Self {
-        let speed = if cfg!(target_arch = "wasm32") {
-            1.
-        } else {
-            0.1
-        };
+        let speed = if cfg!(target_arch = "wasm32") { 4. } else { 5. };
 
         Self {
             speed,
