@@ -26,6 +26,7 @@ bytemuck = { version = "1.12", features = [ "derive" ] }
 image = "0.24"
 anyhow = "1.0"
 nanorand = "0.7.0"
+encase = "0.5.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.6"
