@@ -20,7 +20,7 @@ export class CubewaySimulation extends LitElement {
     });
 
     init().then(() => {
-      run(100);
+      run(10000);
     });
   }
 

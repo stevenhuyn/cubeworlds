@@ -3,5 +3,5 @@ use pollster::FutureExt;
 
 fn main() {
     setup();
-    run(100).block_on();
+    run(10000).block_on();
 }

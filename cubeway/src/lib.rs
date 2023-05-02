@@ -193,15 +193,15 @@ impl State {
             let i = i as f32;
             instances.push(Instance {
                 position: [
-                    (rng.generate::<f32>() - 0.5) * i * 0.5,
-                    (rng.generate::<f32>() - 0.5) * i * 0.5,
-                    (rng.generate::<f32>() - 0.5) * i * 0.5,
+                    (rng.generate::<f32>() - 0.5) * i * 0.005,
+                    (rng.generate::<f32>() - 0.5) * i * 0.005,
+                    (rng.generate::<f32>() - 0.5) * i * 0.005,
                 ],
                 _pad: 0.0,
                 velocity: [
-                    (rng.generate::<f32>() - 0.5) * 0.1,
-                    (rng.generate::<f32>() - 0.5) * 0.1,
-                    (rng.generate::<f32>() - 0.5) * 0.1,
+                    (rng.generate::<f32>() - 0.5) * i * 0.001,
+                    (rng.generate::<f32>() - 0.5) * i * 0.001,
+                    (rng.generate::<f32>() - 0.5) * i * 0.001,
                 ],
                 _pad2: 0.0,
                 rotation: [1., 0., 0.],
