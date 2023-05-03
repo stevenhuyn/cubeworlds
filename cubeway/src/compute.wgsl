@@ -3,12 +3,9 @@ struct SimParams {
 }
 
 struct Instance {
-    position: vec3<f32>,
-    unused: f32,
-    velocity: vec3<f32>,
-    unused2: f32,
-    rotation: vec3<f32>,
-    unused3: f32,
+    @align(16) position: vec3<f32>,
+    @align(16) velocity: vec3<f32>,
+    @align(16) rotation: vec3<f32>,
 }
 
 struct Instances {
