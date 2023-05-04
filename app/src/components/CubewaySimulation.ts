@@ -15,13 +15,24 @@ export class CubewaySimulation extends LitElement {
     super.connectedCallback();
     SimulationController.Instance.addEventListener(DispatchEvent.Particles, (e: Event) => {
       this.requestUpdate();
-      const detail = (<CustomEvent>e).detail;
-      run(detail as number);
+      const detail = (<CustomEvent>e).detail as number;
+
+      init().then(() => {
+        run(detail);
+      });
     });
 
-    init().then(() => {
-      run(10000);
+    SimulationController.Instance.addEventListener(DispatchEvent.Destroy, (e: Event) => {
+      const simulationCanvas = this.querySelector("canvas");
+
+      if (!simulationCanvas) {
+        return;
+      }
+
+      simulationCanvas.remove();
     });
+
+    SimulationController.Instance.init();
   }
 
   render() {

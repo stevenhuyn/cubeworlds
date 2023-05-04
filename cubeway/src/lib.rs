@@ -209,9 +209,6 @@ impl State {
             })
         }
 
-        println!("First element: {:?}", instances[0]);
-        println!("Length: {:?}", instances.len());
-
         let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Instance Buffer"),
             contents: bytemuck::cast_slice(&instances),

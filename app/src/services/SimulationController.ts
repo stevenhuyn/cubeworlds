@@ -2,6 +2,13 @@ import { Pane } from "tweakpane";
 
 export class SimulationController extends EventTarget {
   static #instance: SimulationController;
+  #params = {
+    particles: 1000,
+  };
+
+  public get params() {
+    return this.#params;
+  }
 
   public static get Instance(): SimulationController {
     if (!this.#instance) {
@@ -12,21 +19,23 @@ export class SimulationController extends EventTarget {
 
   private constructor() {
     super();
-    const PARAMS = {
-      particles: 1,
-    };
 
     const pane = new Pane();
 
-    pane.addInput(PARAMS, "particles", { step: 1, min: 1, max: 1000 });
+    pane.addInput(this.#params, "particles", { step: 1000, min: 1000, max: 15000 });
     pane.addButton({ title: "Apply" }).on("click", () => {
-      console.log("apply");
-      this.dispatch(DispatchEvent.Particles, PARAMS.particles);
+      this.dispatch(DispatchEvent.Destroy);
+      setTimeout(() => {
+        this.dispatch(DispatchEvent.Particles, this.#params.particles);
+      }, 500);
     });
   }
 
+  public init() {
+    this.dispatch(DispatchEvent.Particles, this.#params.particles);
+  }
+
   private dispatch(type: DispatchEventType, value?: unknown) {
-    console.log("dispatching");
     const event = new CustomEvent(type, { detail: value });
     this.dispatchEvent(event);
   }
@@ -35,4 +44,5 @@ export class SimulationController extends EventTarget {
 export type DispatchEventType = (typeof DispatchEvent)[keyof typeof DispatchEvent];
 export const DispatchEvent = {
   Particles: "cubeway-particles",
+  Destroy: "cubeway-destroy",
 };
