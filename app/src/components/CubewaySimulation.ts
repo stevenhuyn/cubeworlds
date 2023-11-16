@@ -1,7 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import init, { run } from "../../../cubeway/pkg/cubeway";
-import { DispatchEvent, SimulationController } from "../services/SimulationController";
 
 /**
  * An example element.
