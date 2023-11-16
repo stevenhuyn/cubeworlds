@@ -12,27 +12,36 @@ import { DispatchEvent, SimulationController } from "../services/SimulationContr
 @customElement("cubeway-simulation")
 export class CubewaySimulation extends LitElement {
   connectedCallback(): void {
+
+
     super.connectedCallback();
-    SimulationController.Instance.addEventListener(DispatchEvent.Particles, (e: Event) => {
-      this.requestUpdate();
-      const detail = (<CustomEvent>e).detail as number;
 
-      init().then(() => {
-        run(detail);
-      });
+    init().then(() => {
+      run(10000);
+    }).catch(() => {
+      console.error("Error initializing Cubeway");
     });
 
-    SimulationController.Instance.addEventListener(DispatchEvent.Destroy, (e: Event) => {
-      const simulationCanvas = this.querySelector("canvas");
+    // SimulationController.Instance.addEventListener(DispatchEvent.Particles, (e: Event) => {
+    //   this.requestUpdate();
+    //   const detail = (<CustomEvent>e).detail as number;
 
-      if (!simulationCanvas) {
-        return;
-      }
+    //   // init().then(() => {
+    //   //   run(detail);
+    //   // });
+    // });
 
-      simulationCanvas.remove();
-    });
+    // SimulationController.Instance.addEventListener(DispatchEvent.Destroy, (e: Event) => {
+    //   const simulationCanvas = this.querySelector("canvas");
 
-    SimulationController.Instance.init();
+    //   if (!simulationCanvas) {
+    //     return;
+    //   }
+
+    //   simulationCanvas.remove();
+    // });
+
+    // SimulationController.Instance.init();
   }
 
   render() {
