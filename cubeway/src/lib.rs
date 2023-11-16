@@ -2,7 +2,7 @@ use std::{iter, mem};
 
 use camera::{Camera, CameraController, CameraUniform};
 use cube::Cube;
-use nanorand::{Rng, WyRand};
+use util::rand;
 use wgpu::{util::DeviceExt, ComputePipeline};
 use winit::{
     event::*,
@@ -17,6 +17,7 @@ mod camera;
 mod cube;
 mod greet;
 mod texture;
+mod util;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
@@ -188,20 +189,20 @@ impl State {
         });
 
         let mut instances: Vec<Instance> = Vec::with_capacity(particle_count);
-        let mut rng = WyRand::new();
         for i in 0..particle_count {
+            let seed = i as u32;
             let i = i as f32;
             instances.push(Instance {
                 position: [
-                    (rng.generate::<f32>() - 0.5) * i * 0.005,
-                    (rng.generate::<f32>() - 0.5) * i * 0.005,
-                    (rng.generate::<f32>() - 0.5) * i * 0.005,
+                    (rand(seed * 6) - 0.5) * i * 0.005,
+                    (rand(seed * 6 + 1) - 0.5) * i * 0.005,
+                    (rand(seed * 6 + 2) - 0.5) * i * 0.005,
                 ],
                 _pad: 0.0,
                 velocity: [
-                    (rng.generate::<f32>() - 0.5) * i * 0.001,
-                    (rng.generate::<f32>() - 0.5) * i * 0.001,
-                    (rng.generate::<f32>() - 0.5) * i * 0.001,
+                    (rand(seed * 6 + 3) - 0.5) * i * 0.001,
+                    (rand(seed * 6 + 4) - 0.5) * i * 0.001,
+                    (rand(seed * 6 + 5) - 0.5) * i * 0.001,
                 ],
                 _pad2: 0.0,
                 rotation: [1., 0., 0.],
