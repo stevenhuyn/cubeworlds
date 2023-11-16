@@ -307,7 +307,7 @@ impl State {
             multiview: None,
         });
 
-        let cube = Cube::new(0., 0., 0., 0.5, [1., 0., 0.]);
+        let cube = Cube::new(0., 0., 0., 3., [1., 0., 0.]);
 
         let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Vertex Buffer"),
@@ -549,7 +549,7 @@ pub async fn run(particle_count: usize) {
         // Winit prevents sizing with CSS, so we have to set
         // the size manually when on web.
         use winit::dpi::PhysicalSize;
-        window.set_inner_size(PhysicalSize::new(900, 900));
+        window.set_inner_size(PhysicalSize::new(1280, 720));
 
         use winit::platform::web::WindowExtWebSys;
         web_sys::window()
