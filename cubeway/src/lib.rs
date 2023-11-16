@@ -491,9 +491,9 @@ impl State {
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
-                            r: 0.0,
-                            g: 0.133,
-                            b: 0.251,
+                            r: 0.14,
+                            g: 0.14,
+                            b: 0.14,
                             a: 1.0,
                         }),
                         store: wgpu::StoreOp::Store,
