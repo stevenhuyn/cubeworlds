@@ -2,7 +2,7 @@
 
 Having a second go at compute shaders. This time making some sort of instanced particle system, giving them some gravity.
 
-[Web Version](https://stevenhuyn.com/web-cubeway/) requires Chrome Beta atm.
+[Web Version](https://cubeworlds.stevenhuyn.com/) requires Chrome Beta atm.
 
 ## Example Instanced Gravity Simulation of Cubes
 
