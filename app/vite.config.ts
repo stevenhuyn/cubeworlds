@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/web-cubeway",
+  base: "/",
   plugins: [],
   // https://vitejs.dev/config/server-options.html#server-fs-allow
   server: {
