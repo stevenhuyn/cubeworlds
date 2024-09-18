@@ -26,7 +26,7 @@ WORKDIR /app
 COPY app/package.json ./
 
 # Install npm dependencies
-RUN npm ci
+RUN npm install
 
 # Copy the rest of your frontend code into the container
 COPY app/. ./
