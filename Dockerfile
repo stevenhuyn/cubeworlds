@@ -8,7 +8,7 @@ RUN cargo install wasm-pack
 WORKDIR /cubeway
 
 # Copy the Rust manifest files into the container
-COPY cubeway/Cargo.toml cubeway/Cargo.lock ./
+COPY cubeway/Cargo.toml ./
 
 # Copy the Rust source code into the container
 COPY cubeway/src ./src
@@ -23,7 +23,7 @@ FROM node:16-alpine AS frontend
 WORKDIR /app
 
 # Copy package.json and package-lock.json into the container
-COPY app/package*.json ./
+COPY app/package.json ./
 
 # Install npm dependencies
 RUN npm ci
