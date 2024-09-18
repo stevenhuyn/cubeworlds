@@ -1,5 +1,3 @@
-# nixpacks.toml
-
 [phases.install]
 cmds = [
   "cd app && npm ci"
@@ -12,7 +10,7 @@ cmds = [
 ]
 
 [pkgs]
-packages = ["wasm-pack", "nodejs-16_x"]
+packages = ["wasm-pack", "nodejs_22"]
 
 [tools]
 rust = { version = "stable" }
