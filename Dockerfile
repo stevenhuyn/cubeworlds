@@ -37,14 +37,14 @@ COPY --from=builder /pkg ../cubeway/pkg
 # Build the frontend assets
 RUN npm run build
 
-# Stage 3: Serve the built files with simple-http-server
-FROM rust:latest AS server
+# Stage 3: Serve the built files
+FROM nginx:alpine
 
-# Install simple-http-server
-RUN cargo install simple-http-server
+# Copy the built frontend assets into the nginx html directory
+COPY --from=frontend /app/dist /usr/share/nginx/html
 
-# Set the working directory to /app/dist inside the container
-WORKDIR /app/dist
+# Expose port 80
+EXPOSE 80
 
-# Copy the built frontend files from the frontend stage
-COPY --from=frontend /app/dist ./
+# Start nginx server
+CMD ["nginx", "-g", "daemon off;"]
