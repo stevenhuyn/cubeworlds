@@ -15,11 +15,11 @@ path = "src/main.rs"
 
 [dependencies]
 wasm-bindgen = "0.2"
-winit = "0.28"
+winit = { version = "0.29", features = ["rwh_05"] }
 cgmath = "0.18"
 env_logger = "0.10"
 log = "0.4"
-wgpu = "0.18"
+wgpu = "0.19"
 cfg-if = "1"
 pollster = "0.3"
 bytemuck = { version = "1.12", features = [ "derive" ] }
@@ -28,7 +28,7 @@ anyhow = "1.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.6"
-wgpu = { version = "0.18", features = [] }
+wgpu = { version = "0.19", features = [] }
 console_log = "1.0"
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
@@ -167,6 +167,5 @@ web-sys = { version = "0.3", features = [
 
 
 
- 
 
- 
+
