@@ -545,7 +545,7 @@ pub async fn run(particle_count: usize) {
         // Winit prevents sizing with CSS, so we have to set
         // the size manually when on web.
         use winit::dpi::PhysicalSize;
-        window.set_inner_size(PhysicalSize::new(1280, 720));
+        let _ = window.request_inner_size(PhysicalSize::new(1280, 720));
 
         use winit::platform::web::WindowExtWebSys;
         web_sys::window()
@@ -555,7 +555,7 @@ pub async fn run(particle_count: usize) {
                     .query_selector("cubeway-simulation")
                     .expect("Couldn't find cubeway-simluation web component in document")
                     .expect("Couldn't unwrap query selector result");
-                let canvas = web_sys::Element::from(window.canvas());
+                let canvas = web_sys::Element::from(window.canvas()?);
                 dst.append_child(&canvas).ok()?;
                 Some(())
             })
