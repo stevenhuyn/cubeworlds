@@ -17,7 +17,7 @@ COPY cubeway/src ./src
 RUN wasm-pack build --target web --out-dir /pkg
 
 # Stage 2: Build the frontend
-FROM node:16-alpine AS frontend
+FROM node:24-alpine AS frontend
 
 # Set the working directory to /app inside the container
 WORKDIR /app
