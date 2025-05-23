@@ -2,8 +2,6 @@
 name = "cubeway"
 version = "0.1.0"
 edition = "2021"
-description = "A sample project with wasm-pack"
-repository = "https://github.com/stevenhuyn/hello-wasm"
 
 [lib]
 name = "cubeway"
@@ -18,7 +16,7 @@ strip = true
 
 [dependencies]
 wasm-bindgen = "0.2"
-winit = { version = "0.29", features = ["rwh_05"] }
+winit = { version = "0.29", features = ["android-native-activity"] }
 cgmath = "0.18"
 env_logger = "0.11"
 log = "0.4"
