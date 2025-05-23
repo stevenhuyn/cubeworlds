@@ -13,159 +13,30 @@ crate-type = ["cdylib", "rlib"]
 name = "cubeway-native"
 path = "src/main.rs"
 
+[profile.release]
+strip = true
+
 [dependencies]
 wasm-bindgen = "0.2"
 winit = { version = "0.29", features = ["rwh_05"] }
 cgmath = "0.18"
-env_logger = "0.10"
+env_logger = "0.11"
 log = "0.4"
-wgpu = "0.19"
+wgpu = "25"
 cfg-if = "1"
-pollster = "0.3"
+pollster = "0.4"
 bytemuck = { version = "1.12", features = [ "derive" ] }
-image = "0.24"
+image = "0.25"
 anyhow = "1.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.6"
-wgpu = { version = "0.19", features = [] }
 console_log = "1.0"
+wgpu = { version = "25.0", features = ["webgl"]}
 wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4"
+wasm-bindgen-futures = "0.4.30"
 web-sys = { version = "0.3", features = [
     "Document",
-    "Navigator",
-    "Node",
-    "NodeList",
-    "Gpu",
-    "GpuAdapter",
-    "GpuAddressMode",
-    "GpuAutoLayoutMode",
-    "GpuBindGroup",
-    "GpuBindGroupDescriptor",
-    "GpuBindGroupEntry",
-    "GpuBindGroupLayout",
-    "GpuBindGroupLayoutDescriptor",
-    "GpuBindGroupLayoutEntry",
-    "GpuBlendComponent",
-    "GpuBlendFactor",
-    "GpuBlendOperation",
-    "GpuBlendState",
-    "GpuBuffer",
-    "GpuBufferBinding",
-    "GpuBufferBindingLayout",
-    "GpuBufferBindingType",
-    "GpuBufferDescriptor",
-    "GpuCanvasAlphaMode",
-    "GpuCanvasContext",
-    "GpuCanvasConfiguration",
-    "GpuColorDict",
-    "GpuColorTargetState",
-    "GpuCommandBuffer",
-    "GpuCommandBufferDescriptor",
-    "GpuCommandEncoder",
-    "GpuCommandEncoderDescriptor",
-    "GpuCompareFunction",
-    "GpuCompilationInfo",
-    "GpuCompilationMessage",
-    "GpuCompilationMessageType",
-    "GpuComputePassDescriptor",
-    "GpuComputePassEncoder",
-    "GpuComputePipeline",
-    "GpuComputePipelineDescriptor",
-    "GpuCullMode",
-    "GpuDepthStencilState",
-    "GpuDevice",
-    "GpuDeviceDescriptor",
-    "GpuDeviceLostInfo",
-    "GpuDeviceLostReason",
-    "GpuError",
-    "GpuErrorFilter",
-    # "GpuExtent2dDict", Not yet implemented in web_sys
-    "GpuExtent3dDict",
-    "GpuFeatureName",
-    "GpuFilterMode",
-    "GpuFragmentState",
-    "GpuFrontFace",
-    "GpuImageCopyBuffer",
-    "GpuImageCopyExternalImage",
-    "GpuImageCopyTexture",
-    "GpuImageCopyTextureTagged",
-    "GpuImageDataLayout",
-    "GpuIndexFormat",
-    "GpuLoadOp",
-    "gpu_map_mode",
-    "GpuMipmapFilterMode",
-    "GpuMultisampleState",
-    "GpuObjectDescriptorBase",
-    "GpuOrigin2dDict",
-    "GpuOrigin3dDict",
-    "GpuOutOfMemoryError",
-    "GpuPipelineDescriptorBase",
-    "GpuPipelineLayout",
-    "GpuPipelineLayoutDescriptor",
-    "GpuPowerPreference",
-    "GpuPrimitiveState",
-    "GpuPrimitiveTopology",
-    "GpuProgrammableStage",
-    "GpuQuerySet",
-    "GpuQuerySetDescriptor",
-    "GpuQueryType",
-    "GpuQueue",
-    "GpuRenderBundle",
-    "GpuRenderBundleDescriptor",
-    "GpuRenderBundleEncoder",
-    "GpuRenderBundleEncoderDescriptor",
-    "GpuRenderPassColorAttachment",
-    "GpuRenderPassDepthStencilAttachment",
-    "GpuRenderPassDescriptor",
-    "GpuRenderPassEncoder",
-    "GpuRenderPipeline",
-    "GpuRenderPipelineDescriptor",
-    "GpuRequestAdapterOptions",
-    "GpuSampler",
-    "GpuSamplerBindingLayout",
-    "GpuSamplerBindingType",
-    "GpuSamplerDescriptor",
-    "GpuShaderModule",
-    "GpuShaderModuleDescriptor",
-    "GpuStencilFaceState",
-    "GpuStencilOperation",
-    "GpuStorageTextureAccess",
-    "GpuStorageTextureBindingLayout",
-    "GpuStoreOp",
-    "GpuSupportedFeatures",
-    "GpuSupportedLimits",
-    "GpuTexture",
-    "GpuTextureAspect",
-    "GpuTextureBindingLayout",
-    "GpuTextureDescriptor",
-    "GpuTextureDimension",
-    "GpuTextureFormat",
-    "GpuTextureSampleType",
-    "GpuTextureView",
-    "GpuTextureViewDescriptor",
-    "GpuTextureViewDimension",
-    "GpuUncapturedErrorEvent",
-    "GpuUncapturedErrorEventInit",
-    "GpuValidationError",
-    "GpuVertexAttribute",
-    "GpuVertexBufferLayout",
-    "GpuVertexFormat",
-    "GpuVertexState",
-    "GpuVertexStepMode",
-    "HtmlCanvasElement",
-    "OffscreenCanvas",
-    "ImageBitmap",
-    "ImageBitmapRenderingContext",
     "Window",
     "Element",
-    "WorkerGlobalScope",
-    "WorkerNavigator",
 ]}
-
-
-
-
-
-

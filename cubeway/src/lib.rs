@@ -5,7 +5,10 @@ use cube::Cube;
 use util::rand;
 use wgpu::{util::DeviceExt, ComputePipeline};
 use winit::{
-    event::*, event_loop::{ControlFlow, EventLoop}, keyboard::{KeyCode, PhysicalKey}, window::{Window, WindowBuilder}
+    event::*,
+    event_loop::EventLoop,
+    keyboard::{KeyCode, PhysicalKey},
+    window::{Window, WindowBuilder},
 };
 
 #[cfg(target_arch = "wasm32")]
@@ -115,11 +118,12 @@ impl<'a> State<'a> {
 
         // The instance is a handle to our GPU
         // BackendBit::PRIMARY => Vulkan + Metal + DX12 + Browser WebGPU
-        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
-            backends: wgpu::Backends::all(),
-            dx12_shader_compiler: Default::default(),
-            flags: Default::default(),
-            gles_minor_version: Default::default(),
+        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+            #[cfg(not(target_arch = "wasm32"))]
+            backends: wgpu::Backends::PRIMARY,
+            #[cfg(target_arch = "wasm32")]
+            backends: wgpu::Backends::GL,
+            ..Default::default()
         });
 
         let surface = instance.create_surface(window).unwrap();
@@ -134,18 +138,19 @@ impl<'a> State<'a> {
             .unwrap();
 
         let (device, queue) = adapter
-            .request_device(
-                &wgpu::DeviceDescriptor {
-                    label: None,
-                    required_limits: if cfg!(target_arch = "wasm32") {
-                        wgpu::Limits::downlevel_defaults()
-                    } else {
-                        wgpu::Limits::default()
-                    },
-                    required_features: wgpu::Features::empty(),
+            .request_device(&wgpu::DeviceDescriptor {
+                required_features: wgpu::Features::empty(),
+                // WebGL doesn't support all of wgpu's features, so if
+                // we're building for the web, we'll have to disable some.
+                required_limits: if cfg!(target_arch = "wasm32") {
+                    wgpu::Limits::downlevel_webgl2_defaults()
+                } else {
+                    wgpu::Limits::default()
                 },
-                None, // Trace path
-            )
+                label: None,
+                memory_hints: Default::default(),
+                trace: wgpu::Trace::Off,
+            })
             .await
             .expect("Device unable to get requested features");
 
@@ -257,12 +262,13 @@ impl<'a> State<'a> {
             layout: Some(&render_pipeline_layout),
             vertex: wgpu::VertexState {
                 module: &shader,
-                entry_point: "vs_main",
+                entry_point: Some("vs_main"),
                 buffers: &[Vertex::desc(), Instance::desc()],
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
             },
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
-                entry_point: "fs_main",
+                entry_point: Some("fs_main"),
                 targets: &[Some(wgpu::ColorTargetState {
                     format: config.format,
                     blend: Some(wgpu::BlendState {
@@ -271,6 +277,7 @@ impl<'a> State<'a> {
                     }),
                     write_mask: wgpu::ColorWrites::ALL,
                 })],
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
             }),
             primitive: wgpu::PrimitiveState {
                 topology: wgpu::PrimitiveTopology::TriangleList,
@@ -300,6 +307,7 @@ impl<'a> State<'a> {
             // If the pipeline will be used with a multiview render pass, this
             // indicates how many array layers the attachments will have.
             multiview: None,
+            cache: None,
         });
 
         let cube = Cube::new(0., 0., 0., 3., [1., 0., 0.]);
@@ -372,7 +380,9 @@ impl<'a> State<'a> {
             label: Some("Compute pipeline"),
             layout: Some(&compute_pipeline_layout),
             module: &compute_shader,
-            entry_point: "main",
+            entry_point: Some("main"),
+            compilation_options: wgpu::PipelineCompilationOptions::default(),
+            cache: None,
         });
 
         let mut particle_buffers = Vec::<wgpu::Buffer>::new();
@@ -539,7 +549,6 @@ pub async fn run(particle_count: usize) {
         .build(&event_loop)
         .unwrap();
 
-
     #[cfg(target_arch = "wasm32")]
     {
         // Winit prevents sizing with CSS, so we have to set
@@ -565,7 +574,6 @@ pub async fn run(particle_count: usize) {
     // State::new uses async code, so we're going to wait for it to finish
     let mut state = State::new(&window, particle_count).await;
     let mut surface_configured = false;
-
 
     event_loop
         .run(move |event, control_flow| {
@@ -608,7 +616,7 @@ pub async fn run(particle_count: usize) {
                                         wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated,
                                     ) => state.resize(state.size),
                                     // The system is out of memory, we should probably quit
-                                    Err(wgpu::SurfaceError::OutOfMemory) => {
+                                    Err(wgpu::SurfaceError::OutOfMemory | wgpu::SurfaceError::Other) => {
                                         log::error!("OutOfMemory");
                                         control_flow.exit();
                                     }
@@ -625,5 +633,6 @@ pub async fn run(particle_count: usize) {
                 }
                 _ => {}
             }
-        });
+        })
+        .unwrap();
 }
