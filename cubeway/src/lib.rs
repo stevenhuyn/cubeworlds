@@ -2,7 +2,6 @@ use std::{iter, mem};
 
 use camera::{Camera, CameraController, CameraUniform};
 use cube::Cube;
-use log::{info, warn};
 use util::rand;
 use wgpu::{util::DeviceExt, ComputePipeline};
 use winit::{
@@ -247,10 +246,8 @@ impl<'a> State<'a> {
             source: wgpu::ShaderSource::Wgsl(include_str!("shader.wgsl").into()),
         });
 
-        info!("Creating depth texture");
         let depth_texture =
             texture::Texture::create_depth_texture(&device, &config, "depth_texture");
-        info!("Creating depth texture done");
 
         let render_pipeline_layout =
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -547,8 +544,7 @@ pub fn setup() {
 pub async fn run(particle_count: usize) {
     let event_loop = EventLoop::new().unwrap();
     let window = WindowBuilder::new()
-        // .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None)))
-        // .with_min_inner_size(LogicalSize::new(1.0, 1.0))
+        .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None)))
         .build(&event_loop)
         .unwrap();
 

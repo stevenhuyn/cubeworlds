@@ -1,9 +1,6 @@
 use crate::Vertex;
 
 pub struct Cube {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
     pub vertices: Vec<Vertex>,
     pub indices: Vec<u16>,
 }
@@ -41,9 +38,6 @@ impl Cube {
         ];
 
         Self {
-            x,
-            y,
-            z,
             vertices,
             indices,
         }

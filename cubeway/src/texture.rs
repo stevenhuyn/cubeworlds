@@ -5,6 +5,7 @@ pub struct Texture {
     #[allow(unused)]
     pub texture: wgpu::Texture,
     pub view: wgpu::TextureView,
+    #[allow(unused)]
     pub sampler: wgpu::Sampler,
 }
 
@@ -97,6 +98,7 @@ impl Texture {
         }
     }
 
+    #[allow(unused)]
     pub fn from_bytes(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
@@ -107,6 +109,7 @@ impl Texture {
         Self::from_image(device, queue, &img, Some(label))
     }
 
+    #[allow(unused)]
     pub fn from_image(
         device: &wgpu::Device,
         queue: &wgpu::Queue,
