@@ -2,6 +2,7 @@
 
 ```bash
 wasm-pack build --target web
+
 cargo run build --release --target "wasm-unknown-unkown"
 ```
 
