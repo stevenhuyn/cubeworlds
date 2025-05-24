@@ -2,6 +2,7 @@ use std::{iter, mem};
 
 use camera::{Camera, CameraController, CameraUniform};
 use cube::Cube;
+use log::{info, warn};
 use util::rand;
 use wgpu::{util::DeviceExt, ComputePipeline};
 use winit::{
@@ -130,7 +131,7 @@ impl<'a> State<'a> {
 
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
-                power_preference: wgpu::PowerPreference::HighPerformance,
+                power_preference: wgpu::PowerPreference::default(),
                 compatible_surface: Some(&surface),
                 force_fallback_adapter: false,
             })
@@ -175,8 +176,6 @@ impl<'a> State<'a> {
             view_formats: vec![],
             desired_maximum_frame_latency: 2,
         };
-
-        surface.configure(&device, &config);
 
         let camera = Camera::new(config.width as f32, config.height as f32);
         let camera_controller = CameraController::new();
@@ -247,8 +246,10 @@ impl<'a> State<'a> {
             source: wgpu::ShaderSource::Wgsl(include_str!("shader.wgsl").into()),
         });
 
+        info!("Creating depth texture");
         let depth_texture =
             texture::Texture::create_depth_texture(&device, &config, "depth_texture");
+        info!("Creating depth texture done");
 
         let render_pipeline_layout =
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -534,7 +535,7 @@ pub fn setup() {
     cfg_if::cfg_if! {
         if #[cfg(target_arch = "wasm32")] {
             std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-            console_log::init_with_level(log::Level::Warn).expect("Could't initialize logger");
+            console_log::init_with_level(log::Level::Info).expect("Could't initialize logger");
         } else {
             env_logger::init();
         }
@@ -545,7 +546,8 @@ pub fn setup() {
 pub async fn run(particle_count: usize) {
     let event_loop = EventLoop::new().unwrap();
     let window = WindowBuilder::new()
-        .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None)))
+        // .with_fullscreen(Some(winit::window::Fullscreen::Borderless(None)))
+        // .with_min_inner_size(LogicalSize::new(1.0, 1.0))
         .build(&event_loop)
         .unwrap();
 
@@ -554,7 +556,6 @@ pub async fn run(particle_count: usize) {
         // Winit prevents sizing with CSS, so we have to set
         // the size manually when on web.
         use winit::dpi::PhysicalSize;
-        let _ = window.request_inner_size(PhysicalSize::new(1280, 720));
 
         use winit::platform::web::WindowExtWebSys;
         web_sys::window()
@@ -569,6 +570,8 @@ pub async fn run(particle_count: usize) {
                 Some(())
             })
             .expect("Couldn't append canvas to document body.");
+
+        let _ = window.request_inner_size(PhysicalSize::new(1280, 720));
     }
 
     // State::new uses async code, so we're going to wait for it to finish
@@ -597,8 +600,10 @@ pub async fn run(particle_count: usize) {
                             } => control_flow.exit(),
                             WindowEvent::Resized(physical_size) => {
                                 log::info!("physical_size: {physical_size:?}");
-                                surface_configured = true;
-                                state.resize(*physical_size);
+                                if physical_size.width > 0 && physical_size.height > 0 {
+                                    surface_configured = true;
+                                    state.resize(*physical_size);
+                                }
                             }
                             WindowEvent::RedrawRequested => {
                                 // This tells winit that we want another frame after this one
@@ -616,7 +621,9 @@ pub async fn run(particle_count: usize) {
                                         wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated,
                                     ) => state.resize(state.size),
                                     // The system is out of memory, we should probably quit
-                                    Err(wgpu::SurfaceError::OutOfMemory | wgpu::SurfaceError::Other) => {
+                                    Err(
+                                        wgpu::SurfaceError::OutOfMemory | wgpu::SurfaceError::Other,
+                                    ) => {
                                         log::error!("OutOfMemory");
                                         control_flow.exit();
                                     }
