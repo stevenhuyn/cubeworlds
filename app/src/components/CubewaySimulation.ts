@@ -20,27 +20,6 @@ export class CubewaySimulation extends LitElement {
     }).catch(() => {
       console.error("Error initializing Cubeway");
     });
-
-    // SimulationController.Instance.addEventListener(DispatchEvent.Particles, (e: Event) => {
-    //   this.requestUpdate();
-    //   const detail = (<CustomEvent>e).detail as number;
-
-    //   // init().then(() => {
-    //   //   run(detail);
-    //   // });
-    // });
-
-    // SimulationController.Instance.addEventListener(DispatchEvent.Destroy, (e: Event) => {
-    //   const simulationCanvas = this.querySelector("canvas");
-
-    //   if (!simulationCanvas) {
-    //     return;
-    //   }
-
-    //   simulationCanvas.remove();
-    // });
-
-    // SimulationController.Instance.init();
   }
 
   render() {
