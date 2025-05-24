@@ -144,7 +144,8 @@ impl<'a> State<'a> {
                 // WebGL doesn't support all of wgpu's features, so if
                 // we're building for the web, we'll have to disable some.
                 required_limits: if cfg!(target_arch = "wasm32") {
-                    wgpu::Limits::downlevel_webgl2_defaults()
+                    // This doesn't appear to be low enough for my integrated intel laptop grpahics
+                    wgpu::Limits::downlevel_defaults() 
                 } else {
                     wgpu::Limits::default()
                 },
