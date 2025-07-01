@@ -18,6 +18,11 @@ struct Instances {
 fn main(@builtin(global_invocation_id) GlobalInvocationID: vec3<u32>) {
     var index = GlobalInvocationID.x;
 
+    // Create a massive centre that stays in (0, 0, 0)
+    if (index == 0) {
+        return;
+    }
+
     var force: vec3<f32> = vec3<f32>(0.0, 0.0, 0.0);
     for (var i = 0u; i < arrayLength(&instanceBuffer); i++) {
         if i == index {
@@ -31,7 +36,15 @@ fn main(@builtin(global_invocation_id) GlobalInvocationID: vec3<u32>) {
             continue;
         }
 
-        force += normalize(diff) * params.gravity / length(diff);
+        // Create a massive centre that stays in (0, 0, 0)
+        var mass: f32 = 1.0;
+        if (i == 0) {
+            mass = 1000; 
+        }
+
+        force += mass * normalize(diff) * params.gravity / length(diff);
+
+
     }
 
     instanceBuffer[index].velocity += force;
