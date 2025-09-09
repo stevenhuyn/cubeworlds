@@ -483,6 +483,7 @@ impl<'a> State<'a> {
                 occlusion_query_set: Default::default(),
                 label: Some("Render Pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    depth_slice: None,
                     view: &view,
                     resolve_target: None,
                     ops: wgpu::Operations {
